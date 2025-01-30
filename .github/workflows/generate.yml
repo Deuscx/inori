@@ -1,15 +1,6 @@
 name: generator
 
 on:
-  push:
-  workflow_dispatch:
-  schedule:
-    - cron: '0 0 * * *'
-  issue_comment:
-    types:
-      - created
-      - deleted
-      - edited
   issues:
     types:
       - closed
@@ -52,7 +43,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: generate blog post
-        uses: Deuscx/issue-blog-action@v0.0.5-beta.0
+        uses: Deuscx/issue-blog-action@v0.0.5
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
