@@ -3,6 +3,12 @@ import NavBar from './components/NavBar.vue'
 import Footer from './components/Footer.vue'
 
 import Social from './components/Social.vue'
+
+useHead({
+  htmlAttrs: {
+    class: 'overflow-x-hidden',
+  },
+})
 </script>
 
 <template>

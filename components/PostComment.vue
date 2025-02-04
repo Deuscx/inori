@@ -1,16 +1,18 @@
 <script setup lang="ts">
+import { siteConfig } from '~/site.config'
+
 const props = defineProps<{
-  number: string
+  number: number
 }>()
 onMounted(() => {
   const scriptContainer = document.getElementById('utterances')
   const script = document.createElement('script')
   script.src = 'https://utteranc.es/client.js'
   script.async = true
-  script.setAttribute('issue-number', props.number)
-  script.setAttribute('repo', 'deuscx/inori')
+  script.setAttribute('issue-number', `${props.number}`)
+  script.setAttribute('repo', siteConfig.repo)
   script.setAttribute('theme', isDark.value ? 'gruvbox-dark' : 'github-light')
-  script.crossOrigin = 'anonymous'
+  script.setAttribute('crossorigin', 'anonymous')
 
   scriptContainer && (scriptContainer.innerHTML = '')
   scriptContainer?.appendChild(script)
