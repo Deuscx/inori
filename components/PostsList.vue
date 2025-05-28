@@ -6,6 +6,11 @@ defineOptions({
   name: 'PostsList',
 })
 
+const props = defineProps<{
+  tag?: string
+}>()
+
+const router = useRouter()
 const contents = await queryContent('/posts/').find() as ParsedContent[]
 
 const posts = computed(() => contents.map(i => ({
@@ -15,8 +20,14 @@ const posts = computed(() => contents.map(i => ({
   lang: i.lang,
   labels: i.labels,
   description: i.description,
-})).sort((a, b) => +new Date(b.date) - +new Date(a.date)),
+}))
+  .filter(post => props.tag ? post.labels?.some(label => label.name === props.tag) : true)
+  .sort((a, b) => +new Date(b.date) - +new Date(a.date)),
 )
+
+function goToCategory(tag: string) {
+  router.push(`/tags/${tag}`)
+}
 </script>
 
 <template>
@@ -34,7 +45,7 @@ const posts = computed(() => contents.map(i => ({
             {{ post.title }}
           </RouterLink>
           <div v-if="post.labels">
-            <div v-for="label in post.labels" :key="label.name">
+            <div v-for="label in post.labels" :key="label.name" class="cursor-pointer" @click="goToCategory(label.name)">
               #{{ label.name }}
             </div>
           </div>
