@@ -1,29 +1,25 @@
 <script setup lang="ts">
 import { formatDate } from '~/utils'
-import type { ParsedContent } from '@/types/content'
 
 defineOptions({
   name: 'PostsList',
 })
 
-const props = defineProps<{
+defineProps<{
   tag?: string
 }>()
 
 const router = useRouter()
-const contents = await queryContent('/posts/').find() as ParsedContent[]
+const { data: posts } = await useAsyncData('posts', () =>
+  queryCollection('post').order('created_at', 'DESC').all())
 
-const posts = computed(() => contents.map(i => ({
-  path: i._path,
-  title: i.title,
-  date: i.created_at,
-  lang: i.lang,
-  labels: i.labels,
-  description: i.description,
-}))
-  .filter(post => props.tag ? post.labels?.some(label => label.name === props.tag) : true)
-  .sort((a, b) => +new Date(b.date) - +new Date(a.date)),
-)
+if (!posts.value) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: 'blogs posts not found',
+    fatal: true,
+  })
+}
 
 function goToCategory(tag: string) {
   router.push(`/tags/${tag}`)
