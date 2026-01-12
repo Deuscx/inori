@@ -6,6 +6,9 @@ const router = useRouter()
 
 const content = ref<HTMLElement | null>(null)
 
+const { data: page } = await useAsyncData(route.path, () =>
+  queryCollection('post').path(route.path).first())
+
 onMounted(() => {
   mediumZoom('[data-image-zoom]', {
     background: 'rgba(0, 0, 0, 0.8)',
@@ -20,9 +23,6 @@ function navigate(hash?: string) {
   }
 }
 
-function move(id: string) {
-  setTimeout(() => navigate(`#${id}`), 300)
-}
 onMounted(() => {
   const handleAnchors = (
     event: MouseEvent & { target: HTMLElement },
@@ -66,33 +66,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="slide-enter-content relative">
-    <ContentDoc :path="`/posts/${route.params.post}`">
-      <template #default="{ doc }">
-        <div class="mb4">
-          <div class="text-4xl font-bold">
-            {{ doc.title }}
-          </div>
-          <div>{{ formatReadTime(readTime(doc.description)) }}</div>
-        </div>
-        <ContentRenderer ref="content" class="inori-content prose" :value="doc" />
-        <DocsToc :toc="doc.body.toc" @move="move" />
-        <BackTop class="fixed bottom-10 right-10" />
-        <PostComment :number="doc.number" />
-      </template>
-
-      <template #empty>
-        <h1 class="text-center">
-          Document is empty
-        </h1>
-      </template>
-
-      <template #not-found>
-        <h1 class="text-center">
-          Not Found Any Document
-        </h1>
-      </template>
-    </ContentDoc>
+  <section v-if="page" class="slide-enter-content relative">
+    <ContentRenderer class="prose" :value="page" />
+    <BackTop class="fixed bottom-10 right-10" />
+    <PostComment :number="page.number" />
   </section>
 </template>
 

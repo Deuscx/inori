@@ -4,6 +4,10 @@ import { z } from 'zod'
 // https://content.nuxt.com/docs/collections/define#defining-collections
 export default defineContentConfig({
   collections: {
+    index: defineCollection({
+      type: 'page',
+      source: 'index.md',
+    }),
     post: defineCollection({
       type: 'page',
       source: 'posts/*.md',
